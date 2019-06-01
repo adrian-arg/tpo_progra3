@@ -13,8 +13,11 @@ import java.awt.Color;
  * No contempla las densidades definidas en la matriz (mapa)
  */
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import graficos.Area;
 import graficos.Punto;
 import mapa.MapaInfo;
 
@@ -30,6 +33,13 @@ public class CmcDemoTPO {
 	
 	private void demoObtenerCamino() {
 		Punto a = null, b = null;	
+		/* Se obtiene un mapa de las densidades */
+		int[][] densidades = obtenerDensidades(mapa);
+		/* Densidad maxima es infranqueable */
+		int infranqueable = mapa.MAX_DENSIDAD;
+		
+		/* CONSULTAR INFRANQUEABLE PARA CAMINO USANDO GREEDY */
+			
 		Iterator<Punto> iter = mapa.getPuntos().iterator();
 		List<Punto> listaPuntos = null;
 		int minimo = Integer.MAX_VALUE;
@@ -72,4 +82,38 @@ public class CmcDemoTPO {
 		cmc.dibujarCamino(listaPuntos);
 		return listaPuntos;
 	}
+		
+	private int[][] obtenerDensidades(MapaInfo mapa){
+		int[][] densidades = new int[mapa.ALTO][mapa.LARGO];
+		for(int i = 0; i< mapa.ALTO; i++) {
+			Arrays.fill(densidades[i], 1);
+		}
+		List<Area> areas = mapa.getAreas();
+		for(Area a: areas) {
+			int[] coordenadas = a.getCoordenadas();
+			int x_ini = coordenadas[1];
+			int y_ini = coordenadas[0];
+			int x_fin = coordenadas[3];
+			int y_fin = coordenadas[2];
+			System.out.println("X inicio " + x_ini);
+			System.out.println("Y inicio " + y_ini);
+			System.out.println("X fin " + x_fin);
+			System.out.println("Y fin " + y_fin);
+			
+			/* EL MAPA NO TOMA EL ULTIMO PUNTO MARCADO SINO (X-1,Y-1) */
+			for(int x=x_ini; x < x_fin; x++) {
+				for(int y=y_ini; y < y_fin; y++) {
+					System.out.println("Densidad "+x+","+y+": "+densidades[x][y]);
+					System.out.println("Mapa "+x+","+y+": "+mapa.getDensidad(x,y));
+					if(mapa.getDensidad(x, y) > densidades[x][y]){
+						densidades[x][y] = mapa.getDensidad(x,y);
+						System.out.println("Nueva Densidad "+x+","+y+": "+densidades[x][y]);
+					}
+				}
+			}
+			
+		}
+		return densidades;
+	}
+	
 }

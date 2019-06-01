@@ -7,9 +7,9 @@ import java.awt.Color;
  * Primero expande eje x, segundo expande el eje y.
  * Reitera la lista expandiendo el siguiente (siempre expandiendo de a pares)
  * El recorrido es secuencial (conforme al orden de marcado de los puntos en el mapa)
- * Invoca la método dibujar en cada iteración.
- * Al finalizar la iteración expande los contiguos entre el último y el primero de la lista.
- * Vuelve a Invocar la método dibujar para cerrar el ciclo.
+ * Invoca la mï¿½todo dibujar en cada iteraciï¿½n.
+ * Al finalizar la iteraciï¿½n expande los contiguos entre el ï¿½ltimo y el primero de la lista.
+ * Vuelve a Invocar la mï¿½todo dibujar para cerrar el ciclo.
  * No contempla las densidades definidas en la matriz (mapa)
  */
 import java.util.ArrayList;
@@ -19,6 +19,9 @@ import graficos.Punto;
 import mapa.MapaInfo;
 
 public class CmcDemo2 {
+	
+	/* NO MODIFICAR */
+	
 	private MapaInfo mapa;
 	private CmcImple cmc;
 	
