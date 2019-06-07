@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import graficos.Area;
 import graficos.Punto;
@@ -32,23 +33,53 @@ public class CmcDemoTPO {
 	}
 	
 	private void demoObtenerCamino() {
-		Punto a = null, b = null;	
+		
+		/* Se obtienen los puntos origen y destino */
+		Punto origen = mapa.getPuntos().get(0), destino = mapa.getPuntos().get(1);
+		
 		/* Se obtiene un mapa de las densidades */
 		int[][] densidades = obtenerDensidades(mapa);
+		
 		/* Densidad maxima es infranqueable */
 		int infranqueable = mapa.MAX_DENSIDAD;
 		
-		/* CONSULTAR INFRANQUEABLE PARA CAMINO USANDO GREEDY */
+		
+		/* ***Adrian*** 
+			Hay que hacer una Clase que contenga Punto(o coordenadas), el predecesor, 
+				que además tenga el costo relativo (ver calculo), y peso acumulado 
+					(o solo parcial), que implemente interfaz comparable para poder 
+						usar en la cola de prioridad, de esa manera se ordena sola
+			
+			La dificultad que hay que pensar es como voy haciendo el cambio de los 
+				puntos expandidos que son de menor costo (en cola prioridad o matriz?)
+					En la matriz habría que guardar los definitivos
+						Tener una lista de los ya utilizados? Para no volver a 
+							expandirlos.. Puntos Abiertos (cola prioridad) y 
+								cerrados (diccionario?)
+			
+			Cola Prioridad - https://www.redeszone.net/2012/04/02/curso-de-java-colas-de-prioridad/
+				PriorityQueue<E> colaPrioridad = new PriorityQueue<>();
+			
+			Calculo de Horizontal y Vertical - Peso es (1) Distancia es la Diferencia de 
+				Valor absoluto entre ejes de Puntos origen y destino
+			Calculo de Diagonal - Peso es (1,41) , siempre y cuando no sea una esquina 
+				(consultar por valor de arriba y abajo o algo asi
+			
+			El recorrido se forma exclusivamente con la fila prioridad y se van guardando en una matriz? 
+		*/
+		
+		PriorityQueue<PuntoCandidato> colaPrioridad = new PriorityQueue<>();
+		
 			
 		Iterator<Punto> iter = mapa.getPuntos().iterator();
 		List<Punto> listaPuntos = null;
 		int minimo = Integer.MAX_VALUE;
 		if (iter.hasNext()) {
-			a = iter.next();
+			origen = iter.next();
 		
 			while(iter.hasNext()) {
-				b = iter.next();
-				List<Punto> aux = expandirPuntosContiguos(a, b);
+				destino = iter.next();
+				List<Punto> aux = expandirPuntosContiguos(origen, destino);
 				if(aux.size() < minimo) {
 					minimo = aux.size();
 					listaPuntos = aux;
@@ -59,6 +90,7 @@ public class CmcDemoTPO {
 		}
 	}
 	
+
 	private List<Punto> expandirPuntosContiguos(Punto a, Punto b) {
 		List<Punto> listaPuntos = new ArrayList<Punto>();
 		if (a.x < b.x) {
