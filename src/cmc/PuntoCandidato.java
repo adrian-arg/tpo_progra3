@@ -4,6 +4,11 @@ import graficos.Punto;
 
 public class PuntoCandidato implements Comparable{
 	
+	/**
+	 * setAbierto
+	 * @param abierto utiliza false para dejar el Punto cerrado y true como abierto
+	 */
+	
 	private double costoDistancia;
 	private double costoPeso;
 	private double costoTotal;
@@ -38,6 +43,15 @@ public class PuntoCandidato implements Comparable{
 		return this.costoDistancia + this.costoPeso;
 	}
 	
+	public boolean isAbierto() {
+		return abierto;
+	}
+
+ 
+	public void setAbierto(boolean abierto) {
+		this.abierto = abierto;
+	}
+
 	@Override
 	public int compareTo(Object otroPunto) {
 		double diferencia = this.costoTotal - ((PuntoCandidato) otroPunto).getCostoTotal();
