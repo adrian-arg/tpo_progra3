@@ -67,19 +67,27 @@ public class CmcDemoTPO {
 		expandidos[inicio.x][inicio.y] = inicio;
 		
 		colaPrioridad.add(inicio);
-		while(!llegueADestino){
+		while(!llegueADestino && colaPrioridad.size() > 0){
 			PuntoCandidato seleccionado = colaPrioridad.first();
 			colaPrioridad.remove(seleccionado);
 			seleccionado.setAbierto(false);
 			expanderPunto(seleccionado, densidades, expandidos, colaPrioridad, mapa, punto_fin);
 		}
 		
-
-		List<Punto> listaPuntos = null;		
-		listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
+		if(llegueADestino){
+	
+			List<Punto> listaPuntos = null;		
+			listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
+			
+			if(!listaPuntos.isEmpty()){
+				cmc.dibujarCamino(listaPuntos,Color.red);
+				mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+			}
+		}
 		
-		cmc.dibujarCamino(listaPuntos,Color.red);
-		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+		else{
+			mapa.enviarMensaje("No se puede llegar al Punto Destino");
+		}
 		
 	}
 	
