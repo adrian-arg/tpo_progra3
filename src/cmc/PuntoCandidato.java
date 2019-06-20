@@ -1,6 +1,5 @@
 package cmc;
 
-import java.util.List;
 import java.util.*; 
 
 import graficos.Punto;
@@ -37,12 +36,14 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 	}
 	
 	private double calcularDistanciaADestino(Punto destino) {
-		return Math.abs(destino.getX() - this.x) + Math.abs(destino.getY() - this.y); 
+		return Math.abs(this.x - destino.getX()) + Math.abs(this.y - destino.getY()); 
+//		return Math.abs(destino.getX() - this.x) + Math.abs(destino.getY() - this.y); 
 	}
 	
 	public double calcularCostoAcumulado() {
 		if(this.predecesor!=null){
-			return this.predecesor.getCostoAcumulado() + this.costoDistancia + this.costoPeso;
+			return this.costoDistancia + this.costoPeso;
+//			return this.predecesor.getCostoAcumulado() + this.costoDistancia + this.costoPeso;
 		}
 		else{
 			return this.costoDistancia + this.costoPeso;
@@ -88,11 +89,47 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 		this.predecesor = p;
 	}
 	
+//	@Override
+//	public int compareTo(PuntoCandidato otroPunto) {
+////		double diferencia = this.costoAcumulado - ((PuntoCandidato) otroPunto).getCostoAcumulado();
+////		return (int)diferencia;
+//		
+//		if(this.costoAcumulado > otroPunto.getCostoAcumulado()) {
+//            return 1;
+//        } else if (this.costoAcumulado < otroPunto.getCostoAcumulado()) {
+//            return -1;
+//        } else {
+//            return 0;
+//        }
+//	}
+	
 	@Override
 	public int compareTo(PuntoCandidato otroPunto) {
-		double diferencia = this.costoAcumulado - ((PuntoCandidato) otroPunto).getCostoAcumulado();
-		return (int)diferencia;
+	  {
+	    if (this.costoAcumulado < otroPunto.getCostoAcumulado()) {
+	      return -1;
+	    }
+	    if (this.costoAcumulado > otroPunto.getCostoAcumulado()) {
+	      return 1;
+	    }
+	    if (this.costoDistancia < otroPunto.getCostoDistancia()) {
+	      return 1;
+	    }
+	    if (this.costoDistancia > otroPunto.getCostoDistancia()) {
+	      return -1;
+	    }
+	    //	    return this.toString().compareTo(otroPunto.toString());
+	   	return this.getCoordenadaString().compareTo(otroPunto.getCoordenadaString());
+	  }
 	}
+	
+	
+	  public String getCoordenadaString()
+	  {
+	    return String.valueOf("("+this.x) + ";" + String.valueOf(this.y+")");
+	  }
+	
+	
 	
 //	public PuntoCandidato mejorPuntoCandidato(PuntoCandidato PuntoOrigen, List<Object> listaPuntosUsados) {
 //		
