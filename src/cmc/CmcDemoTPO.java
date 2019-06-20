@@ -92,7 +92,13 @@ public class CmcDemoTPO {
 		Punto punto_inicio = null, punto_fin = null;
 		punto_inicio = mapa.getPuntos().get(0);
 		punto_fin = mapa.getPuntos().get(1);
-
+		
+//		punto_inicio.x = 100;
+//		punto_inicio.y = 100;
+//		punto_fin.x = 150;
+//		punto_fin.y = 150;
+		
+		
 		PuntoCandidato destino = new PuntoCandidato(0, punto_fin.x, punto_fin.y, null, punto_fin);
 		expandidos[destino.x][destino.y] = destino;
 		PuntoCandidato inicio = new PuntoCandidato(0, punto_inicio.x, punto_inicio.y, null, punto_fin);

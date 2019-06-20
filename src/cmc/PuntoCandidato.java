@@ -22,10 +22,7 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 	
 	public PuntoCandidato(int costoPeso, int x, int y, 
 			PuntoCandidato predecesor, Punto destino) {
-		
-		this.costoDistancia = calcularDistanciaADestino(destino);
-		this.costoPeso = costoPeso;
-		this.costoAcumulado = calcularCostoAcumulado();
+
 		/* PuntoCandidato */
 		this.x = x;
 		this.y = y;
@@ -33,8 +30,14 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 		/* PuntoCandidato */
 		this.predecesor = predecesor;
 		this.abierto = true;
+		
+		this.costoDistancia = calcularDistanciaADestino(destino)*100;
+		this.costoPeso = costoPeso;
+		this.costoAcumulado = calcularCostoAcumulado();
+
 	}
 	
+
 	private double calcularDistanciaADestino(Punto destino) {
 		return Math.abs(this.x - destino.getX()) + Math.abs(this.y - destino.getY()); 
 //		return Math.abs(destino.getX() - this.x) + Math.abs(destino.getY() - this.y); 
