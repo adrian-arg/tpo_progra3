@@ -48,12 +48,9 @@ public class CmcDemoTPO {
 	private void demoObtenerCamino() {
 
 		/* Se obtiene un mapa de las densidades */
-		int[][] densidades = new int[mapa.LARGO][mapa.ALTO];
-		densidades = obtenerDensidades(mapa);
+		int[][] densidades = obtenerDensidades(mapa);
 		/* Se crear matriz para puntos extandidos */
 		PuntoCandidato[][] expandidos = crearMatrizDeExpandidos(mapa);
-		/* Densidad maxima es infranqueable */
-		int infranqueable = mapa.MAX_DENSIDAD;
 		/* Cola de Prioridad */
 		SortedSet <PuntoCandidato> colaPrioridad = new TreeSet<PuntoCandidato>();
 		
