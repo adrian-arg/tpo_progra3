@@ -1,5 +1,11 @@
 package cmc;
 import java.awt.Color;
+
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+
 /**
  * Obtiene la lista de los puntos marcados en la matriz (mapa)
  * Itera los mismos de la siguiente forma:
@@ -25,6 +31,7 @@ import mapa.MapaInfo;
 public class CmcDemoTPO {
 	private MapaInfo mapa;
 	private CmcImple cmc;
+	boolean llegueADestino = false;
 	
 	public CmcDemoTPO(MapaInfo mapa, CmcImple cmc) {
 		this.mapa = mapa;
@@ -32,16 +39,23 @@ public class CmcDemoTPO {
 		demoObtenerCamino();
 	}
 	
+	@SuppressWarnings("null")
 	private void demoObtenerCamino() {
-		
 		/* Se obtienen los puntos origen y destino */
-		Punto origen = mapa.getPuntos().get(0), destino = mapa.getPuntos().get(1);
+//		Punto origen = mapa.getPuntos().get(0), destino = mapa.getPuntos().get(1);
 		
+			
+
 		/* Se obtiene un mapa de las densidades */
 		int[][] densidades = obtenerDensidades(mapa);
-		
+		/* Se crear matriz para puntos extandidos */
+		PuntoCandidato[][] expandidos = crearMatrizDeExpandidos(mapa);
 		/* Densidad maxima es infranqueable */
 		int infranqueable = mapa.MAX_DENSIDAD;
+		/* Cola de Prioridad */
+		PriorityQueue<PuntoCandidato> colaPrioridad = new PriorityQueue<>();
+		
+		
 		
 		
 		/* ***Adrian*** 
@@ -68,26 +82,54 @@ public class CmcDemoTPO {
 			El recorrido se forma exclusivamente con la fila prioridad y se van guardando en una matriz? 
 		*/
 		
-		PriorityQueue<PuntoCandidato> colaPrioridad = new PriorityQueue<>();
 		
-			
-		Iterator<Punto> iter = mapa.getPuntos().iterator();
-		List<Punto> listaPuntos = null;
-		int minimo = Integer.MAX_VALUE;
-		if (iter.hasNext()) {
-			origen = iter.next();
+		// Buscamos los puntos de origen y destino
+		Punto punto_inicio = null, punto_fin = null;
+		punto_inicio = mapa.getPuntos().get(0);
+		punto_fin = mapa.getPuntos().get(1);
+
+		PuntoCandidato destino = new PuntoCandidato(0, punto_fin.x, punto_fin.y, null, punto_fin);
+		expandidos[destino.x][destino.y] = destino;
+		PuntoCandidato inicio = new PuntoCandidato(0, punto_inicio.x, punto_inicio.y, null, punto_fin);
+		expandidos[inicio.x][inicio.y] = inicio;
 		
-			while(iter.hasNext()) {
-				destino = iter.next();
-				List<Punto> aux = expandirPuntosContiguos(origen, destino);
-				if(aux.size() < minimo) {
-					minimo = aux.size();
-					listaPuntos = aux;
-				}
-			}
-			cmc.dibujarCamino(listaPuntos,Color.red);
-			mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+		
+		System.out.println("INICIO " + punto_inicio);
+		System.out.println("FIN " + punto_fin);
+		
+		colaPrioridad.add(inicio);
+		while(!llegueADestino){
+			PuntoCandidato seleccionado = colaPrioridad.poll();
+			expanderPunto(seleccionado, densidades, expandidos, colaPrioridad, mapa, punto_fin);
 		}
+		
+
+		List<Punto> listaPuntos = null;
+		
+		//Iterator<Punto> iter = mapa.getPuntos().iterator();
+		//List<Punto> listaPuntos = null;
+//		int minimo = Integer.MAX_VALUE;
+//		
+//		if (iter.hasNext()) {
+//		
+//			while(iter.hasNext()) {
+//				punto_fin = iter.next();
+//				List<Punto> aux = expandirPuntosContiguos(punto_inicio, punto_fin);
+//				if(aux.size() < minimo) {
+//					minimo = aux.size();
+//					listaPuntos = aux;
+//				}
+//			}
+//			cmc.dibujarCamino(listaPuntos,Color.red);
+//			mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+//		}
+		
+		
+		listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
+		
+		cmc.dibujarCamino(listaPuntos,Color.red);
+		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+		
 	}
 	
 
@@ -114,7 +156,92 @@ public class CmcDemoTPO {
 		cmc.dibujarCamino(listaPuntos);
 		return listaPuntos;
 	}
+
+	private void expanderPunto(PuntoCandidato p, int[][] densidades, PuntoCandidato[][] expandidos, PriorityQueue<PuntoCandidato> colaPrioridad, MapaInfo mapa, Punto punto_fin) {
+			
+		PuntoCandidato a = null, b = null, c = null, d = null, e = null, f = null, g = null, h = null;
+
+		if ((p.x-1 >= 0) && (p.y-1 >= 0)){
+			// Coordenadas expandido
+			int x = p.x-1, y = p.y-1;
+			// Se crea nuevo candidato 
+			a = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			// Actualiza la matriz de expandidos con el nuevo PuntoCandidato si es menor que uno existente o si no existe
+			actualizarPuntoEnMatriz(a, x, y, expandidos, colaPrioridad, punto_fin);
+			
+		}
 		
+		if (p.y-1 >= 0){
+			int x = p.x, y = p.y-1;
+			b = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(b, x, y, expandidos, colaPrioridad, punto_fin);
+		}
+		
+		if ((p.x+1 <= mapa.LARGO-1) && (p.y-1 >= 0)){
+			int x = p.x+1, y = p.y-1;
+			System.out.println(x + ", " + y + "   ---- LARGO: " + mapa.LARGO + "   ---- ALTO: " + mapa.ALTO);
+			c = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(c, x, y, expandidos, colaPrioridad, punto_fin);
+		}
+		
+		if (p.x-1  >= 0){
+			int x = p.x-1, y = p.y;
+			d = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(d, x, y, expandidos, colaPrioridad, punto_fin);
+		}
+		
+		if (p.x+1 <= mapa.LARGO-1){
+			int x = p.x+1, y = p.y;
+			e = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(e, x, y, expandidos, colaPrioridad, punto_fin);
+		}
+		
+		if ((p.x-1 >= 0) && (p.y+1 <= mapa.ALTO-1)){
+			int x = p.x-1, y = p.y+1;
+			f = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(f, x, y, expandidos, colaPrioridad, punto_fin);			
+		}
+		
+		if ((p.y+1 <= mapa.ALTO-1)){
+			int x = p.x, y = p.y+1;
+			g = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(g, x, y, expandidos, colaPrioridad, punto_fin);
+			
+		}
+
+		if ((p.x+1 <= mapa.LARGO-1) && (p.y+1 <= mapa.ALTO-1)){
+			int x = p.x+1, y = p.y+1;
+			h = new PuntoCandidato(densidades[x][y], x, y, p, punto_fin);
+			actualizarPuntoEnMatriz(h, x, y, expandidos, colaPrioridad, punto_fin);
+		}
+	
+	}
+	
+	private void actualizarPuntoEnMatriz(PuntoCandidato nuevoCandidato, int x, int y, PuntoCandidato[][] expandidos, PriorityQueue<PuntoCandidato> colaPrioridad, Punto punto_fin){
+		// Se evalua si ya hay un candidato en la matriz de expandidos, sino hay uno se agrega y lo agrega en la cola prioridad
+		if( x == punto_fin.x && y == punto_fin.y){
+			llegueADestino = true;
+			expandidos[x][y] = nuevoCandidato;
+			colaPrioridad.add(nuevoCandidato);
+		}else{
+			if(expandidos[x][y] == null){
+				expandidos[x][y] = nuevoCandidato;
+				colaPrioridad.add(nuevoCandidato);
+			}
+			// Se evalua si el nuevo candidato tiene menor costo que el que esta en la matriz y se reemplaza en la cola prioridad y en la matriz
+			else if(expandidos[x][y].getCostoAcumulado() > nuevoCandidato.getCostoAcumulado()){
+				colaPrioridad.remove(expandidos[x][y]);
+				expandidos[x][y] = nuevoCandidato;
+				colaPrioridad.add(nuevoCandidato);
+			}
+		}
+	}
+	
+	
+	/**
+	 * @param mapa
+	 * @return
+	 */
 	private int[][] obtenerDensidades(MapaInfo mapa){
 		int[][] densidades = new int[mapa.ALTO][mapa.LARGO];
 		for(int i = 0; i< mapa.ALTO; i++) {
@@ -127,19 +254,19 @@ public class CmcDemoTPO {
 			int y_ini = coordenadas[0];
 			int x_fin = coordenadas[3];
 			int y_fin = coordenadas[2];
-			System.out.println("X inicio " + x_ini);
-			System.out.println("Y inicio " + y_ini);
-			System.out.println("X fin " + x_fin);
-			System.out.println("Y fin " + y_fin);
+//			System.out.println("X inicio " + x_ini);
+//			System.out.println("Y inicio " + y_ini);
+//			System.out.println("X fin " + x_fin);
+//			System.out.println("Y fin " + y_fin);
 			
 			/* EL MAPA NO TOMA EL ULTIMO PUNTO MARCADO SINO (X-1,Y-1) */
 			for(int x=x_ini; x < x_fin; x++) {
 				for(int y=y_ini; y < y_fin; y++) {
-					System.out.println("Densidad "+x+","+y+": "+densidades[x][y]);
-					System.out.println("Mapa "+x+","+y+": "+mapa.getDensidad(x,y));
+//					System.out.println("Densidad "+x+","+y+": "+densidades[x][y]);
+//					System.out.println("Mapa "+x+","+y+": "+mapa.getDensidad(x,y));
 					if(mapa.getDensidad(x, y) > densidades[x][y]){
 						densidades[x][y] = mapa.getDensidad(x,y);
-						System.out.println("Nueva Densidad "+x+","+y+": "+densidades[x][y]);
+//						System.out.println("Nueva Densidad "+x+","+y+": "+densidades[x][y]);
 					}
 				}
 			}
@@ -148,4 +275,29 @@ public class CmcDemoTPO {
 		return densidades;
 	}
 	
+	private PuntoCandidato[][] crearMatrizDeExpandidos(MapaInfo mapa){
+		PuntoCandidato[][] matrizExpandidos = new PuntoCandidato[mapa.ALTO][mapa.LARGO];
+		for(int i = 0; i< mapa.ALTO; i++) {
+			Arrays.fill(matrizExpandidos[i], null);
+		}
+		return matrizExpandidos;
+	}
+	
+	private List<Punto> obtenerMejorCamino(PuntoCandidato [][] expandidos, PuntoCandidato inicio, PuntoCandidato destino ){
+		
+		PuntoCandidato actual = destino;
+		
+		List <Punto> camino = new ArrayList<Punto>();
+		camino.add(new Punto(destino.x,destino.y));
+		
+		while(actual.getPredecesor()!=null){
+			actual = actual.getPredecesor();
+			camino.add(new Punto(actual.x,actual.y));
+		}
+		
+		return camino;
+	}
+	
 }
+
+
