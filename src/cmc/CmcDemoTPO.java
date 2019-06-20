@@ -130,6 +130,8 @@ public class CmcDemoTPO {
 		cmc.dibujarCamino(listaPuntos,Color.red);
 		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
 		
+		System.out.println("INICIO " + punto_inicio);
+		System.out.println("FIN " + punto_fin);
 	}
 	
 
@@ -221,8 +223,9 @@ public class CmcDemoTPO {
 		// Se evalua si ya hay un candidato en la matriz de expandidos, sino hay uno se agrega y lo agrega en la cola prioridad
 		if( x == punto_fin.x && y == punto_fin.y){
 			llegueADestino = true;
-			expandidos[x][y] = nuevoCandidato;
-			colaPrioridad.add(nuevoCandidato);
+			expandidos[x][y].setPredecesor(nuevoCandidato.getPredecesor());
+			expandidos[x][y].setCostoAcumulado(nuevoCandidato.getCostoAcumulado());
+			colaPrioridad.add(expandidos[x][y]);
 		}else{
 			if(expandidos[x][y] == null){
 				expandidos[x][y] = nuevoCandidato;
@@ -243,8 +246,8 @@ public class CmcDemoTPO {
 	 * @return
 	 */
 	private int[][] obtenerDensidades(MapaInfo mapa){
-		int[][] densidades = new int[mapa.ALTO][mapa.LARGO];
-		for(int i = 0; i< mapa.ALTO; i++) {
+		int[][] densidades = new int[mapa.LARGO][mapa.ALTO];
+		for(int i = 0; i< mapa.LARGO; i++) {
 			Arrays.fill(densidades[i], 1);
 		}
 		List<Area> areas = mapa.getAreas();
@@ -276,8 +279,8 @@ public class CmcDemoTPO {
 	}
 	
 	private PuntoCandidato[][] crearMatrizDeExpandidos(MapaInfo mapa){
-		PuntoCandidato[][] matrizExpandidos = new PuntoCandidato[mapa.ALTO][mapa.LARGO];
-		for(int i = 0; i< mapa.ALTO; i++) {
+		PuntoCandidato[][] matrizExpandidos = new PuntoCandidato[mapa.LARGO][mapa.ALTO];
+		for(int i = 0; i< mapa.LARGO; i++) {
 			Arrays.fill(matrizExpandidos[i], null);
 		}
 		return matrizExpandidos;

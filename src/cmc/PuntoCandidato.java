@@ -17,7 +17,7 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 	private double costoAcumulado;
 	public int x, y;
 	private boolean abierto; //Abierto == true , Cerrado == false
-	private Punto punto;
+//	private Punto punto;
 	private Punto destino;
 	private PuntoCandidato predecesor;
 	
@@ -63,6 +63,12 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 
 	public double getCostoAcumulado() {
 		return costoAcumulado;
+	}
+	
+	
+
+	public void setCostoAcumulado(double costoAcumulado) {
+		this.costoAcumulado = costoAcumulado;
 	}
 
 	public void setAbierto(boolean abierto) {
