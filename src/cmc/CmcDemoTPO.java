@@ -35,8 +35,8 @@ public class CmcDemoTPO {
 	private MapaInfo mapa;
 	private CmcImple cmc;
 	boolean llegueADestino = false;
-	int diag = 141;
-	int recto = 100;
+	double diag = 1.41;
+	double recto = 1;
 	
 	public CmcDemoTPO(MapaInfo mapa, CmcImple cmc) {
 		this.mapa = mapa;
@@ -48,7 +48,7 @@ public class CmcDemoTPO {
 	private void demoObtenerCamino() {
 
 		/* Se obtiene un mapa de las densidades */
-		int[][] densidades = obtenerDensidades(mapa);
+		double[][] densidades = obtenerDensidades(mapa);
 		/* Se crear matriz para puntos extandidos */
 		PuntoCandidato[][] expandidos = crearMatrizDeExpandidos(mapa);
 		/* Cola de Prioridad */
@@ -81,7 +81,9 @@ public class CmcDemoTPO {
 			
 			if(!listaPuntos.isEmpty()){
 				cmc.dibujarCamino(listaPuntos,Color.red);
-				mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+				mapa.enviarMensaje(""
+						+ "Camino minimo: " + listaPuntos.size() + " puntos. "
+						+ "Peso Acumulado: " + Double.toString(destino.getCostoAcumulado()));
 			}
 		}
 		
@@ -92,7 +94,7 @@ public class CmcDemoTPO {
 	}
 	
 
-	private void expanderPunto(PuntoCandidato p, int[][] densidades, PuntoCandidato[][] expandidos, SortedSet<PuntoCandidato> colaPrioridad, MapaInfo mapa, Punto punto_fin) {
+	private void expanderPunto(PuntoCandidato p, double[][] densidades, PuntoCandidato[][] expandidos, SortedSet<PuntoCandidato> colaPrioridad, MapaInfo mapa, Punto punto_fin) {
 			
 		PuntoCandidato diag_izq_arr = null, arr = null, diag_der_arr = null, izq = null, der = null, diag_izq_aba = null, aba = null, diag_aba_der = null;
 
@@ -192,8 +194,8 @@ public class CmcDemoTPO {
 	 * @param mapa
 	 * @return
 	 */
-	private int[][] obtenerDensidades(MapaInfo mapa) {
-		int[][] densidades = new int[mapa.LARGO][mapa.ALTO];
+	private double[][] obtenerDensidades(MapaInfo mapa) {
+		double[][] densidades = new double[mapa.LARGO][mapa.ALTO];
 		for (int i = 0; i < mapa.LARGO; i++) {
 			Arrays.fill(densidades[i], 1);
 		}
