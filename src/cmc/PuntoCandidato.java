@@ -46,7 +46,6 @@ public class PuntoCandidato implements Comparable{
 	public boolean isAbierto() {
 		return abierto;
 	}
-
  
 	public void setAbierto(boolean abierto) {
 		this.abierto = abierto;
