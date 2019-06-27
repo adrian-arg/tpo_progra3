@@ -35,8 +35,8 @@ public class CmcDemoTPO {
 	private MapaInfo mapa;
 	private CmcImple cmc;
 	boolean llegueADestino = false;
-	int diag = 141;
-	int recto = 100;
+	double diag = 1.41;
+	double recto = 1;
 	
 	public CmcDemoTPO(MapaInfo mapa, CmcImple cmc) {
 		this.mapa = mapa;
@@ -48,7 +48,7 @@ public class CmcDemoTPO {
 	private void demoObtenerCamino() {
 
 		/* Se obtiene un mapa de las densidades */
-		int[][] densidades = obtenerDensidades(mapa);
+		double[][] densidades = obtenerDensidades(mapa);
 		/* Se crear matriz para puntos extandidos */
 		PuntoCandidato[][] expandidos = crearMatrizDeExpandidos(mapa);
 		/* Cola de Prioridad */
@@ -74,9 +74,24 @@ public class CmcDemoTPO {
 			expanderPunto(seleccionado, densidades, expandidos, colaPrioridad, mapa, punto_fin);
 		}
 		
+<<<<<<< HEAD
 
 		List<Punto> listaPuntos = null;		
 		listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
+=======
+		if(llegueADestino){
+	
+			List<Punto> listaPuntos = null;		
+			listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
+			
+			if(!listaPuntos.isEmpty()){
+				cmc.dibujarCamino(listaPuntos,Color.red);
+				mapa.enviarMensaje(""
+						+ "Camino minimo: " + listaPuntos.size() + " puntos. "
+						+ "Peso Acumulado: " + Double.toString(destino.getCostoAcumulado()));
+			}
+		}
+>>>>>>> master
 		
 		cmc.dibujarCamino(listaPuntos,Color.red);
 		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
@@ -84,7 +99,7 @@ public class CmcDemoTPO {
 	}
 	
 
-	private void expanderPunto(PuntoCandidato p, int[][] densidades, PuntoCandidato[][] expandidos, SortedSet<PuntoCandidato> colaPrioridad, MapaInfo mapa, Punto punto_fin) {
+	private void expanderPunto(PuntoCandidato p, double[][] densidades, PuntoCandidato[][] expandidos, SortedSet<PuntoCandidato> colaPrioridad, MapaInfo mapa, Punto punto_fin) {
 			
 		PuntoCandidato diag_izq_arr = null, arr = null, diag_der_arr = null, izq = null, der = null, diag_izq_aba = null, aba = null, diag_aba_der = null;
 
@@ -93,7 +108,7 @@ public class CmcDemoTPO {
 			int x = p.x-1, y = p.y-1;
 			// Se crea nuevo candidato 
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				diag_izq_arr = new PuntoCandidato(diag * densidades[x][y], x,y, p, punto_fin);
+				diag_izq_arr = new PuntoCandidato(diag * (densidades[x][y]+1), x,y, p, punto_fin);
 				// Actualiza la matriz de expandidos con el nuevo PuntoCandidato
 				// si es menor que uno existente o si no existe
 				actualizarPuntoEnMatriz(diag_izq_arr, x, y, expandidos,colaPrioridad, punto_fin);
@@ -103,7 +118,7 @@ public class CmcDemoTPO {
 		if (p.y-1 >= 0){
 			int x = p.x, y = p.y-1;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				arr = new PuntoCandidato(recto * densidades[x][y], x, y, p, punto_fin);
+				arr = new PuntoCandidato(recto * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(arr, x, y, expandidos, colaPrioridad, punto_fin);
 			}
 		}
@@ -111,7 +126,7 @@ public class CmcDemoTPO {
 		if ((p.x+1 <= mapa.LARGO-1) && (p.y-1 >= 0)){
 			int x = p.x+1, y = p.y-1;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				diag_der_arr = new PuntoCandidato(diag * densidades[x][y], x, y, p, punto_fin);
+				diag_der_arr = new PuntoCandidato(diag * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(diag_der_arr, x, y, expandidos, colaPrioridad, punto_fin);
 			}
 		}
@@ -119,7 +134,7 @@ public class CmcDemoTPO {
 		if (p.x-1  >= 0){
 			int x = p.x-1, y = p.y;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				izq = new PuntoCandidato(recto * densidades[x][y], x, y, p, punto_fin);
+				izq = new PuntoCandidato(recto * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(izq, x, y, expandidos, colaPrioridad, punto_fin);
 			}
 		}
@@ -127,7 +142,7 @@ public class CmcDemoTPO {
 		if (p.x+1 <= mapa.LARGO-1){
 			int x = p.x+1, y = p.y;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				der = new PuntoCandidato(recto * densidades[x][y], x, y, p, punto_fin);
+				der = new PuntoCandidato(recto * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(der, x, y, expandidos, colaPrioridad, punto_fin);
 			}
 		}
@@ -135,7 +150,7 @@ public class CmcDemoTPO {
 		if ((p.x-1 >= 0) && (p.y+1 <= mapa.ALTO-1)){
 			int x = p.x-1, y = p.y+1;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				diag_izq_aba = new PuntoCandidato(diag * densidades[x][y], x, y, p, punto_fin);
+				diag_izq_aba = new PuntoCandidato(diag * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(diag_izq_aba, x, y, expandidos, colaPrioridad, punto_fin);			
 			}
 		}
@@ -143,7 +158,7 @@ public class CmcDemoTPO {
 		if ((p.y+1 <= mapa.ALTO-1)){
 			int x = p.x, y = p.y+1;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				aba = new PuntoCandidato(recto * densidades[x][y], x, y, p, punto_fin);
+				aba = new PuntoCandidato(recto * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(aba, x, y, expandidos, colaPrioridad, punto_fin);
 			}
 		}
@@ -151,7 +166,7 @@ public class CmcDemoTPO {
 		if ((p.x+1 <= mapa.LARGO-1) && (p.y+1 <= mapa.ALTO-1)){
 			int x = p.x+1, y = p.y+1;
 			if (densidades[x][y] != mapa.MAX_DENSIDAD) {
-				diag_aba_der = new PuntoCandidato(diag * densidades[x][y], x, y, p, punto_fin);
+				diag_aba_der = new PuntoCandidato(diag * (densidades[x][y]+1), x, y, p, punto_fin);
 				actualizarPuntoEnMatriz(diag_aba_der, x, y, expandidos, colaPrioridad, punto_fin);
 			}
 		}
@@ -184,10 +199,10 @@ public class CmcDemoTPO {
 	 * @param mapa
 	 * @return
 	 */
-	private int[][] obtenerDensidades(MapaInfo mapa) {
-		int[][] densidades = new int[mapa.LARGO][mapa.ALTO];
+	private double[][] obtenerDensidades(MapaInfo mapa) {
+		double[][] densidades = new double[mapa.LARGO][mapa.ALTO];
 		for (int i = 0; i < mapa.LARGO; i++) {
-			Arrays.fill(densidades[i], 1);
+			Arrays.fill(densidades[i], 0);
 		}
 		List<Area> areas = mapa.getAreas();
 		for (Area a : areas) {
