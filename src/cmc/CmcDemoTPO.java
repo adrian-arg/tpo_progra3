@@ -67,18 +67,14 @@ public class CmcDemoTPO {
 		expandidos[inicio.x][inicio.y] = inicio;
 		
 		colaPrioridad.add(inicio);
-		while(!llegueADestino){
+		while(!llegueADestino && !colaPrioridad.isEmpty()){
 			PuntoCandidato seleccionado = colaPrioridad.first();
 			colaPrioridad.remove(seleccionado);
 			seleccionado.setAbierto(false);
 			expanderPunto(seleccionado, densidades, expandidos, colaPrioridad, mapa, punto_fin);
 		}
 		
-<<<<<<< HEAD
 
-		List<Punto> listaPuntos = null;		
-		listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
-=======
 		if(llegueADestino){
 	
 			List<Punto> listaPuntos = null;		
@@ -90,11 +86,15 @@ public class CmcDemoTPO {
 						+ "Camino minimo: " + listaPuntos.size() + " puntos. "
 						+ "Peso Acumulado: " + Double.toString(destino.getCostoAcumulado()));
 			}
+		}else{
+			mapa.enviarMensaje("No existe un camino posible.");
 		}
->>>>>>> master
+
+//		List<Punto> listaPuntos = null;		
+//		listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
 		
-		cmc.dibujarCamino(listaPuntos,Color.red);
-		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
+//		cmc.dibujarCamino(listaPuntos,Color.red);
+//		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
 		
 	}
 	
