@@ -66,6 +66,7 @@ public class CmcDemoTPO {
 		PuntoCandidato inicio = new PuntoCandidato(0, punto_inicio.x, punto_inicio.y, null, punto_fin);
 		expandidos[inicio.x][inicio.y] = inicio;
 		
+		
 		colaPrioridad.add(inicio);
 		while(!llegueADestino && !colaPrioridad.isEmpty()){
 			PuntoCandidato seleccionado = colaPrioridad.first();
@@ -90,11 +91,6 @@ public class CmcDemoTPO {
 			mapa.enviarMensaje("No existe un camino posible.");
 		}
 
-//		List<Punto> listaPuntos = null;		
-//		listaPuntos = obtenerMejorCamino(expandidos, inicio, destino );
-		
-//		cmc.dibujarCamino(listaPuntos,Color.red);
-//		mapa.enviarMensaje("Camino minimo: " + listaPuntos.size() + " puntos");
 		
 	}
 	

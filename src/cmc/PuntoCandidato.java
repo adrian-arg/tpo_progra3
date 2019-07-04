@@ -41,7 +41,6 @@ public class PuntoCandidato implements Comparable<PuntoCandidato>{
 
 	private double calcularDistanciaADestino(Punto destino) {
 		return (Math.abs(this.x - destino.getX()) + Math.abs(this.y - destino.getY())) * multiploPeso; 
-//		return Math.abs(destino.getX() - this.x) + Math.abs(destino.getY() - this.y); 
 	}
 	
 	public double calcularCostoAcumulado() {
